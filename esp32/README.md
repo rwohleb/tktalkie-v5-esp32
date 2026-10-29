@@ -9,7 +9,7 @@ compiled as-is; the files here stand in for the Teensy-specific pieces.
 | `tktalkie5_ino.cpp` | Builds `tktalkie5.ino` as plain C++ (PlatformIO's `.ino` converter is unreliable here) |
 | `lib/TKPort/tk_port.h` | Force-included ahead of V5. Board I2S pins, `Serial1` → BLE, `analogRead` pin mapping, `LED_BUILTIN`, `elapsedMillis` |
 | `lib/TKPort/AudioControlSGTL5000.*` | The SGTL5000 control class, driving the ES8388 |
-| `lib/TKPort/BleSerial.*` | The HM-10 BLE module |
+| `lib/TKPort/BleSerial.*` | The HM-10 BLE module: a NimBLE peripheral with the same service (FFE0) and characteristic (FFE1), advertised as `TK-Talkie` (override with `-D TK_BLE_NAME=\"...\"`) |
 | `lib/TKPort/tk_board.h` | Pin map per board |
 | `lib/SD` | Teensy SD library, backed by SD_MMC |
 | `lib/Snooze` | Teensy Snooze library (`usb` serial, light sleep) |
@@ -35,6 +35,11 @@ Upload and open the serial monitor:
 ```bash
 pio run -e audiokit -t upload -t monitor
 ```
+
+`tk_port.h` is force-included, which PlatformIO's dependency scanner doesn't
+see. The sketch wrapper also includes it by name so edits to the port layer
+rebuild the sketch; if a change to `lib/TKPort` headers doesn't seem to take
+effect in the other V5 `.cpp` files, run `pio run -e audiokit -t clean`.
 
 ## Pulling in upstream V5 changes
 
