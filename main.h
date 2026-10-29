@@ -6,6 +6,11 @@
 #define READ_RESTART()     (*(volatile uint32_t *)RESTART_ADDR)
 #define WRITE_RESTART(val) ((*(volatile uint32_t *)RESTART_ADDR) = (val))
 
+#if defined(ESP32)
+int freeMemory() {
+  return ESP.getFreeHeap();
+}
+#else
 #ifdef __arm__
 // should use uinstd.h to define sbrk but Due causes a conflict
 extern "C" char* sbrk(int incr);
@@ -23,6 +28,7 @@ int freeMemory() {
   return __brkval ? &top - __brkval : &top - __malloc_heap_start;
 #endif  // __arm__
 }
+#endif  // ESP32
 // END
 
 void showMemory() {
@@ -41,7 +47,11 @@ void showMemory() {
 
 
 void softreset() {
+#if defined(ESP32)
+ ESP.restart();
+#else
  WRITE_RESTART(0x5FA0004);
+#endif
 }
 
 // Check if the PTT button was pressed 

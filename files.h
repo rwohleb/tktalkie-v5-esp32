@@ -191,7 +191,7 @@ int listDirectories(const char *path, char directories[][FILENAME_SIZE])
          index += listFiles(entry.name(), files, max-index, filter, recurse, echo);
        }
      } else {
-       char *fname = entry.name();
+       char *fname = (char *)entry.name();
        upcase(fname);
        debug(F("Checking %s\n"), fname);
        char *ret = strstr(entry.name(), "~");
